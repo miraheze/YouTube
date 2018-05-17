@@ -91,7 +91,7 @@ function embedYouTube( $input, $argv, $parser ) {
 	if ( !empty( $argv['ytid'] ) ) {
 		$ytid = embedYouTube_url2ytid( $argv['ytid'] );
 	} elseif ( !empty( $input ) ) {
-		$ytid = embedYouTube_url2ytid( $input );
+		$ytid = embedYouTube_url2ytid( $parser->preprocess($input) );
 	}
 
 	// Did we not get an ID at all? That can happen if someone enters outright
