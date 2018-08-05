@@ -39,11 +39,11 @@ class YouTube {
 		$parser->setHook( 'gvideo', array( __CLASS__, 'embedGoogleVideo' ) );
 		$parser->setHook( 'aovideo', array( __CLASS__, 'embedArchiveOrgVideo' ) );
 		$parser->setHook( 'aoaudio', array( __CLASS__, 'embedArchiveOrgAudio' ) );
-		$parser->setHook( 'wegame', array( __CLASS__, 'embedWeGame' ) );
+		/*$parser->setHook( 'wegame', array( __CLASS__, 'embedWeGame' ) );
 		$parser->setHook( 'tangler', array( __CLASS__, 'embedTangler' ) );
 		$parser->setHook( 'gtrailer', array( __CLASS__, 'embedGametrailers' ) );
 		$parser->setHook( 'nicovideo', array( __CLASS__, 'embedNicovideo' ) );
-		$parser->setHook( 'ggtube', array( __CLASS__, 'embedGoGreenTube' ) );
+		$parser->setHook( 'ggtube', array( __CLASS__, 'embedGoGreenTube' ) );*/
 		return true;
 	}
 
