@@ -293,7 +293,7 @@ class YouTube {
 		}
 	}
 
-	public static function url2weid( $url ) {
+	/*public static function url2weid( $url ) {
 		$id = $url;
 
 		if ( preg_match( '/^http:\/\/www\.wegame\.com\/watch\/(.+)\/$/', $url, $preg ) ) {
@@ -507,6 +507,6 @@ class YouTube {
 			$url = "http://www.gogreentube.com/embed/{$ggid}";
 			return "<script type=\"text/javascript\" src=\"{$url}\"></script>";
 		}
-	}
+	}*/
 
 }
