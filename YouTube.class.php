@@ -131,7 +131,7 @@ class YouTube {
 				return "<iframe width=\"{$width}\" height=\"{$height}\" src=\"{$url}\" frameborder=\"0\" allowfullscreen></iframe>";
 			}
 		}
-	}
+	
 
 	public static function url2gvid( $url ) {
 		$id = $url;
