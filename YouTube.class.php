@@ -97,44 +97,15 @@ class YouTube {
 			$argv['width'] = str_replace( 'px', '', $argv['width'] );
 		}
 
-		// Which technology to use for embedding -- HTML5 or Flash Player?
-		if ( !empty( $argv['type'] ) && strtolower( $argv['type'] ) == 'flash' ) {
-			$width = $width_max = 425;
-			$height = $height_max = 355;
+		// Render video using HTML5.
+		$width = 560;
+		$height = 315;
+		$maxWidth = 960;
+		$maxHeight = 720;
 
-			if (
-				!empty( $argv['width'] ) &&
-				filter_var( $argv['width'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
-				$argv['width'] <= $width_max
-			)
-			{
-				$width = $argv['width'];
-			}
-			if (
-				!empty( $argv['height'] ) &&
-				filter_var( $argv['height'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
-				$argv['height'] <= $height_max
-			)
-			{
-				$height = $argv['height'];
-			}
-
-			$urlBase = '//www.youtube.com/v/';
-			if ( !empty( $ytid ) ) {
-				$url = $urlBase . $ytid;
-				return "<object type=\"application/x-shockwave-flash\" data=\"{$url}\" width=\"{$width}\" height=\"{$height}\"><param name=\"movie\" value=\"{$url}\"/><param name=\"wmode\" value=\"transparent\"/></object>";
-			}
-		} else {
-			// If the type argument wasn't supplied, default to HTML5, since that's
-			// what YouTube offers by default as well
-			$width = 560;
-			$height = 315;
-			$maxWidth = 960;
-			$maxHeight = 720;
-
-			if (
-				!empty( $argv['width'] ) &&
-				filter_var( $argv['width'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
+		if (
+			!empty( $argv['width'] ) &&
+			filter_var( $argv['width'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
 				$argv['width'] <= $maxWidth
 			)
 			{
