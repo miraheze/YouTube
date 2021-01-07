@@ -1,6 +1,8 @@
 {
     "@metadata": {
-        "authors": []
+        "authors": [
+            "Universal Omega"
+        ]
     },
-    "youtube-desc": "Embeds YouTube and Google Video movies, Archive.org audio and video, WeGame and Gametrailers video, Tangler forum, and GoGreenTube video"
+    "youtube-desc": "Embeds YouTube and Google Video movies and Archive.org audio and video."
 }
