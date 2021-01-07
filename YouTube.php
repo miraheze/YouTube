@@ -42,7 +42,7 @@ class YouTube {
 		$parser->setHook( 'aovideo', [ __CLASS__, 'embedArchiveOrgVideo' ] );
 		$parser->setHook( 'aoaudio', [ __CLASS__, 'embedArchiveOrgAudio' ] );
 		$parser->setHook( 'nicovideo', [ __CLASS__, 'embedNicovideo' ] );
-		/*$parser->setHook( 'wegame', [ __CLASS__, 'embedWeGame' ] );
+		/* $parser->setHook( 'wegame', [ __CLASS__, 'embedWeGame' ] );
 		$parser->setHook( 'tangler', [ __CLASS__, 'embedTangler' ] );
 		$parser->setHook( 'gtrailer', [ __CLASS__, 'embedGametrailers' ] ); */
 	}
