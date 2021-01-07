@@ -7,7 +7,7 @@
  * @ingroup Extensions
  * @author Przemek Piotrowski <ppiotr@wikia-inc.com> for Wikia, Inc.
  * @copyright © 2006-2008, Wikia Inc.
- * @licence GNU General Public Licence 2.0 or later
+ * @license GPL-2.0-or-later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@ class YouTube {
 
 	/**
 	 * Register all the new tags with the Parser.
+	 *
+	 * @param Parser &$parser
 	 */
 	public static function registerTags( &$parser ) {
 		$parser->setHook( 'youtube', [ __CLASS__, 'embedYouTube' ] );
@@ -42,8 +44,7 @@ class YouTube {
 		$parser->setHook( 'nicovideo', [ __CLASS__, 'embedNicovideo' ] );
 		/* $parser->setHook( 'wegame', [ __CLASS__, 'embedWeGame' ] );
 		$parser->setHook( 'tangler', [ __CLASS__, 'embedTangler' ] );
-		$parser->setHook( 'gtrailer', [ __CLASS__, 'embedGametrailers' ] );
-		$parser->setHook( 'ggtube', [ __CLASS__, 'embedGoGreenTube' ] ); */
+		$parser->setHook( 'gtrailer', [ __CLASS__, 'embedGametrailers' ] ); */
 	}
 
 	/**
@@ -74,7 +75,7 @@ class YouTube {
 		if ( !empty( $argv['ytid'] ) ) {
 			$ytid = self::url2ytid( $argv['ytid'] );
 		} elseif ( !empty( $input ) ) {
-			$ytid = self::url2ytid( $parser->recursivePreprocess( $input ) );
+			$ytid = self::url2ytid( $input );
 		}
 
 		// Did we not get an ID at all? That can happen if someone enters outright
@@ -97,26 +98,68 @@ class YouTube {
 			$argv['width'] = str_replace( 'px', '', $argv['width'] );
 		}
 
-		// Render video using HTML5.
-		$width = 560;
-		$height = 315;
-		$maxWidth = 960;
-		$maxHeight = 720;
+		// Define urlArgs - container for every URL argument.
+		$urlArgs = [];
 
+		// Got a timestamp to start on? If yes, include it in URL.
 		if (
-			!empty( $argv['width'] ) &&
-			filter_var( $argv['width'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
+			!empty( $argv['start'] ) &&
+			filter_var( $argv['start'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] )
+		) {
+			$urlArgs['start'] = $argv['start'];
+		}
+
+		// Go through all the potential URL arguments and get them into one string.
+		$argsStr = '';
+		if ( !empty( $urlArgs ) ) {
+			$argsStr = wfArrayToCgi( $urlArgs );
+		}
+
+		// Which technology to use for embedding -- HTML5 or Flash Player?
+		if ( !empty( $argv['type'] ) && strtolower( $argv['type'] ) == 'flash' ) {
+			$width = $width_max = 425;
+			$height = $height_max = 355;
+
+			if (
+				!empty( $argv['width'] ) &&
+				filter_var( $argv['width'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
+				$argv['width'] <= $width_max
+			) {
+				$width = $argv['width'];
+			}
+			if (
+				!empty( $argv['height'] ) &&
+				filter_var( $argv['height'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
+				$argv['height'] <= $height_max
+			) {
+				$height = $argv['height'];
+			}
+
+			$urlBase = '//www.youtube.com/v/';
+			if ( !empty( $ytid ) ) {
+				$url = $urlBase . $ytid . $argsStr;
+				return "<object type=\"application/x-shockwave-flash\" data=\"{$url}\" width=\"{$width}\" height=\"{$height}\"><param name=\"movie\" value=\"{$url}\"/><param name=\"wmode\" value=\"transparent\"/></object>";
+			}
+		} else {
+			// If the type argument wasn't supplied, default to HTML5, since that's
+			// what YouTube offers by default as well
+			$width = 560;
+			$height = 315;
+			$maxWidth = 960;
+			$maxHeight = 720;
+
+			if (
+				!empty( $argv['width'] ) &&
+				filter_var( $argv['width'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
 				$argv['width'] <= $maxWidth
-			)
-			{
+			) {
 				$width = $argv['width'];
 			}
 			if (
 				!empty( $argv['height'] ) &&
 				filter_var( $argv['height'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
 				$argv['height'] <= $maxHeight
-			)
-			{
+			) {
 				$height = $argv['height'];
 			}
 
@@ -127,11 +170,11 @@ class YouTube {
 			$urlBase = '//www.youtube-nocookie.com/embed/';
 
 			if ( !empty( $ytid ) ) {
-				$url = $urlBase . $ytid;
+				$url = $urlBase . $ytid . $argsStr;
 				return "<iframe width=\"{$width}\" height=\"{$height}\" src=\"{$url}\" frameborder=\"0\" allowfullscreen></iframe>";
 			}
 		}
-	
+	}
 
 	public static function url2gvid( $url ) {
 		$id = $url;
@@ -198,16 +241,14 @@ class YouTube {
 			!empty( $argv['width'] ) &&
 			settype( $argv['width'], 'integer' ) &&
 			( $width_max >= $argv['width'] )
-		)
-		{
+		) {
 			$width = $argv['width'];
 		}
 		if (
 			!empty( $argv['height'] ) &&
 			settype( $argv['height'], 'integer' ) &&
 			( $height_max >= $argv['height'] )
-		)
-		{
+		) {
 			$height = $argv['height'];
 		}
 
@@ -244,22 +285,58 @@ class YouTube {
 			!empty( $argv['width'] ) &&
 			settype( $argv['width'], 'integer' ) &&
 			( $width_max >= $argv['width'] )
-		)
-		{
+		) {
 			$width = $argv['width'];
 		}
 		if (
 			!empty( $argv['height'] ) &&
 			settype( $argv['height'], 'integer' ) &&
 			( $height_max >= $argv['height'] )
-		)
-		{
+		) {
 			$height = $argv['height'];
 		}
 
 		if ( !empty( $aoaid ) ) {
 			$url = urlencode( "http://www.archive.org/audio/xspf-maker.php?identifier={$aoaid}" );
 			return "<object type=\"application/x-shockwave-flash\" data=\"http://www.archive.org/audio/xspf_player.swf?playlist_url={$url}\" width=\"{$width}\" height=\"{$height}\"><param name=\"movie\" value=\"http://www.archive.org/audio/xspf_player.swf?playlist_url={$url}\"/></object>";
+		}
+	}
+	
+	public static function url2nvid( $url ) {
+		$id = $url;
+
+		preg_match( '/([0-9A-Za-z]+)/', $id, $preg );
+		$id = $preg[1];
+
+		return $id;
+	}
+
+	public static function embedNicovideo( $input, $argv, $parser ) {
+		$nvid = '';
+		$width  = 400;
+		$height = 326;
+
+		if ( !empty( $argv['nvid'] ) ) {
+			$nvid = self::url2nvid( $argv['nvid'] );
+		} elseif ( !empty( $input ) ) {
+			$nvid = self::url2nvid( $input );
+		}
+		if (
+			!empty( $argv['width'] ) &&
+			settype( $argv['width'], 'integer' )
+		) {
+			$width = $argv['width'];
+		}
+		if (
+			!empty( $argv['height'] ) &&
+			settype( $argv['height'], 'integer' )
+		) {
+			$height = $argv['height'];
+		}
+
+		if ( !empty( $nvid ) ) {
+			$url = "https://embed.nicovideo.jp/watch/{$nvid}";
+			return "<iframe width=\"{$width}\" height=\"{$height}\" src=\"{$url}\"></iframe>";
 		}
 	}
 
@@ -290,16 +367,14 @@ class YouTube {
 			!empty( $argv['width'] ) &&
 			settype( $argv['width'], 'integer' ) &&
 			( $width_max >= $argv['width'] )
-		)
-		{
+		) {
 			$width = $argv['width'];
 		}
 		if (
 			!empty( $argv['height'] ) &&
 			settype( $argv['height'], 'integer' ) &&
 			( $height_max >= $argv['height'] )
-		)
-		{
+		) {
 			$height = $argv['height'];
 		}
 
@@ -368,16 +443,14 @@ class YouTube {
 			!empty( $argv['width'] ) &&
 			settype( $argv['width'], 'integer' ) &&
 			( $width_max >= $argv['width'] )
-		)
-		{
+		) {
 			$width = $argv['width'];
 		}
 		if (
 			!empty( $argv['height'] ) &&
 			settype( $argv['height'], 'integer' ) &&
 			( $height_max >= $argv['height'] )
-		)
-		{
+		) {
 			$height = $argv['height'];
 		}
 
@@ -388,95 +461,4 @@ class YouTube {
 			return "<object classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\"  codebase=\"http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0\" id=\"gtembed\" width=\"{$width}\" height=\"{$height}\">	<param name=\"allowScriptAccess\" value=\"sameDomain\" /> 	<param name=\"allowFullScreen\" value=\"true\" /> <param name=\"movie\" value=\"{$url}\"/> <param name=\"quality\" value=\"high\" /> <embed src=\"{$url}\" swLiveConnect=\"true\" name=\"gtembed\" align=\"middle\" allowScriptAccess=\"sameDomain\" allowFullScreen=\"true\" quality=\"high\" pluginspage=\"http://www.macromedia.com/go/getflashplayer\" type=\"application/x-shockwave-flash\" width=\"{$width}\" height=\"{$height}\"></embed> </object>";
 		}
 	} */
-
-	public static function url2nvid( $url ) {
-		$id = $url;
-
-		preg_match( '/([0-9A-Za-z]+)/', $id, $preg );
-		$id = $preg[1];
-
-		return $id;
-	}
-
-	public static function embedNicovideo( $input, $argv, $parser ) {
-		$nvid = '';
-		$width  = 400;
-		$height = 326;
-
-		if ( !empty( $argv['nvid'] ) ) {
-			$nvid = self::url2nvid( $argv['nvid'] );
-		} elseif ( !empty( $input ) ) {
-			$nvid = self::url2nvid( $input );
-		}
-		if (
-			!empty( $argv['width'] ) &&
-			settype( $argv['width'], 'integer' )
-		)
-		{
-			$width = $argv['width'];
-		}
-		if (
-			!empty( $argv['height'] ) &&
-			settype( $argv['height'], 'integer' )
-		)
-		{
-			$height = $argv['height'];
-		}
-
-		if ( !empty( $nvid ) ) {
-			$url = "https://embed.nicovideo.jp/watch/{$nvid}";
-			return "<iframe width=\"{$width}\" height=\"{$height}\" src=\"{$url}\"></iframe>";
-		}
-	}
-
-	/* public static function url2ggid( $url ) {
-		$id = $url;
-
-		if ( preg_match( '/^http:\/\/www\.gogreentube\.com\/watch\.php\?v=(.+)$/', $url, $preg ) ) {
-			$id = $preg[1];
-		} elseif ( preg_match( '/^http:\/\/www\.gogreentube\.com\/embed\/(.+)$/', $url, $preg ) ) {
-			$id = $preg[1];
-		}
-
-		preg_match( '/([0-9A-Za-z]+)/', $id, $preg );
-		$id = $preg[1];
-
-		return $id;
-	}
-
-	public static function embedGoGreenTube( $input, $argv, $parser ) {
-		$ggid = '';
-		$width  = $width_max  = 432;
-		$height = $height_max = 394;
-
-		if ( !empty( $argv['ggid'] ) ) {
-			$ggid = self::url2ggid( $argv['ggid'] );
-		} elseif ( !empty( $input ) ) {
-			$ggid = self::url2ggid( $input );
-		}
-
-		if (
-			!empty( $argv['width'] ) &&
-			settype( $argv['width'], 'integer' ) &&
-			( $width_max >= $argv['width'] )
-		)
-		{
-			$width = $argv['width'];
-		}
-
-		if (
-			!empty( $argv['height'] ) &&
-			settype( $argv['height'], 'integer' ) &&
-			( $height_max >= $argv['height'] )
-		)
-		{
-			$height = $argv['height'];
-		}
-
-		if ( !empty( $ggid ) ) {
-			$url = "http://www.gogreentube.com/embed/{$ggid}";
-			return "<script type=\"text/javascript\" src=\"{$url}\"></script>";
-		}
-	} */
-
 }
