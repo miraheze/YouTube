@@ -302,7 +302,7 @@ class YouTube {
 		}
 	}
 	
-		public static function url2nvid( $url ) {
+	public static function url2nvid( $url ) {
 		$id = $url;
 
 		preg_match( '/([0-9A-Za-z]+)/', $id, $preg );
