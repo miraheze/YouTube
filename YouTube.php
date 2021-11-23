@@ -277,7 +277,7 @@ class YouTube {
 			return "<iframe src=\"$uri\" width=\"$width\" height=\"$height\" frameborder=\"0\" webkitallowfullscreen=\"true\" mozallowfullscreen=\"true\" allowfullscreen></iframe>";
 		}
 	}
-	
+
 	public static function url2nvid( $url ) {
 		$id = $url;
 
