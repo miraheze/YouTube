@@ -54,17 +54,27 @@ class YouTube {
 	 * @return string|bool Video ID on success, boolean false on failure
 	 */
 	public static function url2ytid( $url ) {
-		// @see http://linuxpanda.wordpress.com/2013/07/24/ultimate-best-regex-pattern-to-get-grab-parse-youtube-video-id-from-any-youtube-link-url/
-		$pattern = '~(?:http|https|)(?::\/\/|)(?:www.|)(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/ytscreeningroom\?v=|\/feeds\/api\/videos\/|\/user\S*[^\w\-\s]|\S*[^\w\-\s]))([\w\-]{11})[a-z0-9;:@?&%=+\/\$_.-]*~i';
-		$id = false;
-
-		if ( preg_match( $pattern, $url, $preg ) ) {
-			$id = $preg[1];
-		} elseif ( preg_match( '/([0-9A-Za-z_-]+)/', $url, $preg ) ) {
-			$id = $preg[1];
+		$parsedUrl = parse_url( $url );
+		if ( $parsedUrl == false || $parsedUrl['host'] !== 'www.youtube.com' || $parsedUrl['host'] !== 'youtu.be' ) {
+			//Failure when parsing or not a YouTube domain
+			return false;
 		}
+		if ( str_contains( $parsedUrl['query'], '?' ) ) {
+			//Regular URL with v GET parameter
 
-		return $id;
+			$parameters = [];
+			parse_str( $parsedUrl['query'], $parameters );
+			return $parameters['v'];
+		} elseif ( $parsedUrl['host'] == 'www.youtube.com') {
+			//Embed URL
+
+			$explodedPath = explode( '/', $parsedUrl['path'], 3  );
+			return explodedPath[2];
+		} else {
+			//youtu.be URL
+
+			return substr( $parserUrl['path'], 1 ); //remove initial slash
+		}
 	}
 
 	public static function embedYouTube( $input, $argv, $parser ) {
