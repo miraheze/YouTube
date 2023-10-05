@@ -1,6 +1,8 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"铁桶"
+		]
 	},
-	"youtube-desc": "允许插入Youtube及Google Video电影、Archive.org影音、WeGame及Gametrailers影片、Tangler forum及GoGreenTube影片"
+	"youtube-desc": "嵌入YouTube和Google Video上的影片以及Archive.org上的音频和视频"
 }
