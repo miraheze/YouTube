@@ -1,6 +1,6 @@
 {
 	"name": "YouTube",
-	"version": "1.9.3",
+	"version": "1.9.4",
 	"author": [
 		"Przemek Piotrowski",
 		"Southparkfan",
@@ -24,7 +24,20 @@
 	"Hooks": {
 		"ParserFirstCallInit": [
 			"YouTube::registerTags"
+		],
+		"BeforePageDisplay": [
+			"YouTube::onBeforePageDisplay"
 		]
+	},
+	"ResourceModules": {
+		"ext.YouTube.app": {
+			"localBasePath": "modules/ext.YouTube.app",
+			"remoteExtPath": "YouTube/modules/ext.YouTube.app",	
+			"packageFiles": [
+				"youtube.js"
+			],
+			"styles": "youtube.css"
+		}
 	},
 	"manifest_version": 2
 }

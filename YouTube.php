@@ -2,9 +2,7 @@
 /**
  * Parser hook-based extension to show audio and video players
  * from YouTube and other similar sites.
- *
- * @file
- * @ingroup Extensions
+ * 
  * @author Przemek Piotrowski <ppiotr@wikia-inc.com> for Wikia, Inc.
  * @copyright © 2006-2008, Wikia Inc.
  * @license GPL-2.0-or-later
@@ -30,6 +28,16 @@
  */
 
 class YouTube {
+	/** 
+	 * Loads the CSS and JS code
+	*/
+	public static function onBeforePageDisplay( $out, $skin ) : void {
+		// By default, MediaWiki loads CSS after the page finishes loading.
+		// However, this creates a flash of unstyled content when the CSS is used like it's used here.
+		// As such, we're calling addModuleStyles directly to avoid this.
+		$out->addModuleStyles( 'ext.YouTube.app' );
+		$out->addModules( 'ext.YouTube.app' );
+	}
 
 	/**
 	 * Register all the new tags with the Parser.
@@ -145,7 +153,33 @@ class YouTube {
 
 		if ( !empty( $ytid ) ) {
 			$url = $urlBase . $ytid . $argsStr;
-			return "<iframe width=\"{$width}\" height=\"{$height}\" src=\"{$url}\" frameborder=\"0\" allowfullscreen></iframe>";
+			// Don't embed the YouTube videos directly, instead, embed a placeholder that represents a video and load the videos when the placeholder is clicked on.
+			// We're doing this because YouTube embeds a lot of useless code.
+			// Embedding 4 YouTube videos on a page caused the core web vitals performance score to go from 90ish to 50ish and this could be reproduced
+			// numerous times in testing.
+			return "
+				<div class=\"ytVideo\">
+					<img
+						width=\"{$width}\"
+						height=\"{$height}\"
+						loading=\"lazy\"
+						src=\"https://i.ytimg.com/vi_webp/{$ytid}/maxresdefault.webp\"
+					/>
+					<span style=\"width: {$width}px\">
+						<svg style=\"fill: gray; stroke: white\" xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 24 24\">
+							<path d=\"M12 5c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm-2 12V9l6 4-6 4z\"/>
+						</svg>
+					</span>
+					<iframe
+						style=\"display: none\"
+						frameborder=\"0\"
+						allowfullscreen
+						width=\"{$width}\"
+						height=\"{$height}\"
+						data-src=\"{$url}\"
+					/>
+				</div>
+			";
 		}
 	}
 

@@ -1,0 +1,20 @@
+.ytVideo {
+    width: fit-content;
+    cursor: pointer;
+}
+
+.ytVideo span {
+    align-items: center;
+    pointer-events: none;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    top: 0;
+    position: absolute;
+}
+
+.ytVideo img {
+    pointer-events: none;
+    border: 3px solid black;
+    border-radius: 5px;
+}
