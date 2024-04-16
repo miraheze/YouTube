@@ -1,4 +1,4 @@
-$( ".ytVideo" ).toArray().forEach( function ( ytVideo ) {
+$( ".mw-ytVideo" ).toArray().forEach( function ( ytVideo ) {
     ytVideo.addEventListener( "click", function ( event ) {
         // Disable cursor: pointer effect on ytVideo
         event.target.style.cursor = 'unset';

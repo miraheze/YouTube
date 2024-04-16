@@ -158,7 +158,7 @@ class YouTube {
 			// Embedding 4 YouTube videos on a page caused the core web vitals performance score to go from 90ish to 50ish and this could be reproduced
 			// numerous times in testing.
 			return "
-				<div class=\"ytVideo\">
+				<div class=\"mw-ytVideo\">
 					<img
 						width=\"{$width}\"
 						height=\"{$height}\"

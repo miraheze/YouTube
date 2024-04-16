@@ -1,9 +1,9 @@
-.ytVideo {
+.mw-ytVideo {
     width: fit-content;
     cursor: pointer;
 }
 
-.ytVideo span {
+.mw-ytVideo span {
     align-items: center;
     pointer-events: none;
     display: flex;
@@ -13,7 +13,7 @@
     position: absolute;
 }
 
-.ytVideo img {
+.mw-ytVideo img {
     pointer-events: none;
     border: 3px solid black;
     border-radius: 5px;
