@@ -1,17 +1,7 @@
 .mw-ytVideo {
     width: fit-content;
     cursor: pointer;
-}
-
-.mw-ytVideo span {
-    align-items: center;
-    pointer-events: none;
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    top: 0;
-    position: absolute;
-}
+} 
 
 .mw-ytVideo img {
     pointer-events: none;

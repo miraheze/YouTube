@@ -117,7 +117,10 @@ class YouTube {
 			$urlArgs['start'] = $argv['start'];
 		}
 
-		// Go through all the potential URL arguments and get them into one string.
+		// Make the video start playing as soon as it loads (i.e., as soon as the play button is clicked)
+		$urlArgs['autoplay'] = '1';
+
+		// Convert the arguments to a string
 		$argsStr = '';
 		if ( !empty( $urlArgs ) ) {
 			$argsStr = wfArrayToCgi( $urlArgs );
@@ -152,20 +155,33 @@ class YouTube {
 		$urlBase = '//www.youtube-nocookie.com/embed/';
 
 		if ( !empty( $ytid ) ) {
-			$url = $urlBase . $ytid . $argsStr;
+			$url = $urlBase . $ytid . '?' . $argsStr;
 			// Don't embed the YouTube videos directly, instead, embed a placeholder that represents a video and load the videos when the placeholder is clicked on.
 			// We're doing this because YouTube embeds a lot of useless code.
 			// Embedding 4 YouTube videos on a page caused the core web vitals performance score to go from 90ish to 50ish and this could be reproduced
 			// numerous times in testing.
+
+			// Styles for the play button are added inline instead of in youtube.css to
+			// prevent a flash of unstyled content (where the play button is far away from the video for ~500ms) 
+			// that occurs due to how ResourceLoader works 
 			return "
-				<div class=\"mw-ytVideo\">
+				<div class=\"mw-ytVideo\" style=\"width: ${width}px; height: ${height}px\">
 					<img
-						width=\"{$width}\"
-						height=\"{$height}\"
-						loading=\"lazy\"
+						width=\"${width}\"
+						height=\"${height}\"
 						src=\"https://i.ytimg.com/vi_webp/{$ytid}/maxresdefault.webp\"
 					/>
-					<span style=\"width: {$width}px\">
+					<span style=\"
+						width: {$width}px;
+						align-items: center;
+						pointer-events: none;
+						display: flex;
+						height: 100%;
+						justify-content: center;
+						top: 0;
+						left: 0;
+						position: absolute;
+					\">
 						<svg style=\"fill: gray; stroke: white\" xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"64\" viewBox=\"0 0 24 24\">
 							<path d=\"M12 5c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm-2 12V9l6 4-6 4z\"/>
 						</svg>
@@ -288,6 +304,7 @@ class YouTube {
 		} elseif ( !empty( $input ) ) {
 			$aoaid = self::url2aoaid( $input );
 		}
+		
 		if (
 			!empty( $argv['width'] ) &&
 			settype( $argv['width'], 'integer' ) &&
@@ -295,6 +312,7 @@ class YouTube {
 		) {
 			$width = $argv['width'];
 		}
+		
 		if (
 			!empty( $argv['height'] ) &&
 			settype( $argv['height'], 'integer' ) &&

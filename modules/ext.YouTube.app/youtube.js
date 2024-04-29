@@ -3,7 +3,7 @@ $( ".mw-ytVideo" ).toArray().forEach( function ( ytVideo ) {
         // Disable cursor: pointer effect on ytVideo
         event.target.style.cursor = 'unset';
 
-        // Hide placeholder image
+        // Hide placeholder thumbnail
         event.target.children[0].style.display = 'none'; 
 
         // Hide placeholder play button
