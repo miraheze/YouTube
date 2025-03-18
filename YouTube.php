@@ -29,6 +29,8 @@
  * @todo smart <video> and <audio> tag
  */
 
+use MediaWiki\Parser\Parser;
+
 class YouTube {
 
 	/**
