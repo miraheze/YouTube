@@ -277,7 +277,8 @@ class Hooks {
 		if ( $aoaid ) {
 			$uri = "https://archive.org/embed/$aoaid";
 			if ( !empty( $argv['playlist'] ) ) {
-				$playlist = (bool)$argv['playlist'];
+				// Get a string representation while validating that it is a boolean.
+				$playlist = json_encode( (bool)$argv['playlist'] );
 				$uri .= "&playlist=$playlist";
 			}
 			return "<iframe src=\"$uri\" width=\"$width\" height=\"$height\" frameborder=\"0\" webkitallowfullscreen=\"true\" mozallowfullscreen=\"true\" allowfullscreen></iframe>";
