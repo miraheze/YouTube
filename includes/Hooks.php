@@ -1,4 +1,7 @@
 <?php
+
+namespace Miraheze\YouTube;
+
 /**
  * Parser hook-based extension to show audio and video players
  * from YouTube and other similar sites.
@@ -31,7 +34,7 @@
 
 use MediaWiki\Parser\Parser;
 
-class YouTube {
+class Hooks {
 
 	/**
 	 * Register all the new tags with the Parser.
