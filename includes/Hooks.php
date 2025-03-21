@@ -79,7 +79,7 @@ class Hooks {
 
 		if ( !empty( $argv['ytid'] ) ) {
 			$ytid = self::url2ytid( $argv['ytid'] );
-		} elseif ( !empty( $input ) ) {
+		} elseif ( $input ) {
 			$ytid = self::url2ytid( $input );
 		}
 
@@ -116,7 +116,7 @@ class Hooks {
 
 		// Go through all the potential URL arguments and get them into one string.
 		$argsStr = '';
-		if ( !empty( $urlArgs ) ) {
+		if ( $urlArgs ) {
 			$argsStr = wfArrayToCgi( $urlArgs );
 		}
 
@@ -132,14 +132,14 @@ class Hooks {
 			filter_var( $argv['width'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
 			$argv['width'] <= $maxWidth
 		) {
-			$width = $argv['width'];
+			$width = (int)$argv['width'];
 		}
 		if (
 			!empty( $argv['height'] ) &&
 			filter_var( $argv['height'], FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 0 ] ] ) &&
 			$argv['height'] <= $maxHeight
 		) {
-			$height = $argv['height'];
+			$height = (int)$argv['height'];
 		}
 
 		// Support YouTube's "enhanced privacy mode", in which "YouTube won’t
@@ -148,7 +148,7 @@ class Hooks {
 		// @see https://support.google.com/youtube/answer/171780?expand=PrivacyEnhancedMode#privacy
 		$urlBase = '//www.youtube-nocookie.com/embed/';
 
-		if ( !empty( $ytid ) ) {
+		if ( $ytid ) {
 			$url = $urlBase . $ytid . $argsStr;
 			return "<iframe width=\"{$width}\" height=\"{$height}\" src=\"{$url}\" frameborder=\"0\" allowfullscreen></iframe>";
 		}
@@ -176,17 +176,17 @@ class Hooks {
 
 		if ( !empty( $argv['gvid'] ) ) {
 			$gvid = self::url2gvid( $argv['gvid'] );
-		} elseif ( !empty( $input ) ) {
+		} elseif ( $input ) {
 			$gvid = self::url2gvid( $input );
 		}
 		if ( !empty( $argv['width'] ) && settype( $argv['width'], 'integer' ) && ( $width_max >= $argv['width'] ) ) {
-			$width = $argv['width'];
+			$width = (int)$argv['width'];
 		}
 		if ( !empty( $argv['height'] ) && settype( $argv['height'], 'integer' ) && ( $height_max >= $argv['height'] ) ) {
-			$height = $argv['height'];
+			$height = (int)$argv['height'];
 		}
 
-		if ( !empty( $gvid ) ) {
+		if ( $gvid ) {
 			$url = "http://video.google.com/googleplayer.swf?docId={$gvid}";
 			return "<object type=\"application/x-shockwave-flash\" data=\"{$url}\" width=\"{$width}\" height=\"{$height}\"><param name=\"movie\" value=\"{$url}\"/><param name=\"wmode\" value=\"transparent\"/></object>";
 		}
@@ -212,7 +212,7 @@ class Hooks {
 
 		if ( !empty( $argv['aovid'] ) ) {
 			$aovid = self::url2aovid( $argv['aovid'] );
-		} elseif ( !empty( $input ) ) {
+		} elseif ( $input ) {
 			$aovid = self::url2aovid( $input );
 		}
 		if (
@@ -220,17 +220,17 @@ class Hooks {
 			settype( $argv['width'], 'integer' ) &&
 			( $width_max >= $argv['width'] )
 		) {
-			$width = $argv['width'];
+			$width = (int)$argv['width'];
 		}
 		if (
 			!empty( $argv['height'] ) &&
 			settype( $argv['height'], 'integer' ) &&
 			( $height_max >= $argv['height'] )
 		) {
-			$height = $argv['height'];
+			$height = (int)$argv['height'];
 		}
 
-		if ( !empty( $aovid ) ) {
+		if ( $aovid ) {
 			$url = "http://www.archive.org/download/{$aovid}.flv";
 			return "<object type=\"application/x-shockwave-flash\" data=\"http://www.archive.org/flv/FlowPlayerWhite.swf\" width=\"{$width}\" height=\"{$height}\"><param name=\"movie\" value=\"http://www.archive.org/flv/FlowPlayerWhite.swf\"/><param name=\"flashvars\" value=\"config={loop: false, videoFile: '{$url}', autoPlay: false}\"/></object>";
 		}
@@ -256,7 +256,7 @@ class Hooks {
 
 		if ( !empty( $argv['aoaid'] ) ) {
 			$aoaid = self::url2aoaid( $argv['aoaid'] );
-		} elseif ( !empty( $input ) ) {
+		} elseif ( $input ) {
 			$aoaid = self::url2aoaid( $input );
 		}
 		if (
@@ -264,20 +264,21 @@ class Hooks {
 			settype( $argv['width'], 'integer' ) &&
 			( $width_max >= $argv['width'] )
 		) {
-			$width = $argv['width'];
+			$width = (int)$argv['width'];
 		}
 		if (
 			!empty( $argv['height'] ) &&
 			settype( $argv['height'], 'integer' ) &&
 			( $height_max >= $argv['height'] )
 		) {
-			$height = $argv['height'];
+			$height = (int)$argv['height'];
 		}
 
-		if ( !empty( $aoaid ) ) {
+		if ( $aoaid ) {
 			$uri = "https://archive.org/embed/$aoaid";
 			if ( !empty( $argv['playlist'] ) ) {
-				$uri .= "&playlist=" . (bool)$argv['playlist'];
+				$playlist = (bool)$argv['playlist'];
+				$uri .= "&playlist=$playlist";
 			}
 			return "<iframe src=\"$uri\" width=\"$width\" height=\"$height\" frameborder=\"0\" webkitallowfullscreen=\"true\" mozallowfullscreen=\"true\" allowfullscreen></iframe>";
 		}
@@ -299,23 +300,23 @@ class Hooks {
 
 		if ( !empty( $argv['nvid'] ) ) {
 			$nvid = self::url2nvid( $argv['nvid'] );
-		} elseif ( !empty( $input ) ) {
+		} elseif ( $input ) {
 			$nvid = self::url2nvid( $input );
 		}
 		if (
 			!empty( $argv['width'] ) &&
 			settype( $argv['width'], 'integer' )
 		) {
-			$width = $argv['width'];
+			$width = (int)$argv['width'];
 		}
 		if (
 			!empty( $argv['height'] ) &&
 			settype( $argv['height'], 'integer' )
 		) {
-			$height = $argv['height'];
+			$height = (int)$argv['height'];
 		}
 
-		if ( !empty( $nvid ) ) {
+		if ( $nvid ) {
 			$url = "https://embed.nicovideo.jp/watch/{$nvid}";
 			return "<iframe width=\"{$width}\" height=\"{$height}\" src=\"{$url}\"></iframe>";
 		}
