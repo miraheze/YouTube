@@ -42,14 +42,14 @@ class Hooks {
 	 * @param Parser &$parser
 	 */
 	public static function registerTags( &$parser ) {
-		$parser->setHook( 'youtube', [ __CLASS__, 'embedYouTube' ] );
-		$parser->setHook( 'gvideo', [ __CLASS__, 'embedGoogleVideo' ] );
-		$parser->setHook( 'aovideo', [ __CLASS__, 'embedArchiveOrgVideo' ] );
-		$parser->setHook( 'aoaudio', [ __CLASS__, 'embedArchiveOrgAudio' ] );
-		$parser->setHook( 'nicovideo', [ __CLASS__, 'embedNicovideo' ] );
-		/* $parser->setHook( 'wegame', [ __CLASS__, 'embedWeGame' ] );
-		$parser->setHook( 'tangler', [ __CLASS__, 'embedTangler' ] );
-		$parser->setHook( 'gtrailer', [ __CLASS__, 'embedGametrailers' ] ); */
+		$parser->setHook( 'youtube', [ self::class, 'embedYouTube' ] );
+		$parser->setHook( 'gvideo', [ self::class, 'embedGoogleVideo' ] );
+		$parser->setHook( 'aovideo', [ self::class, 'embedArchiveOrgVideo' ] );
+		$parser->setHook( 'aoaudio', [ self::class, 'embedArchiveOrgAudio' ] );
+		$parser->setHook( 'nicovideo', [ self::class, 'embedNicovideo' ] );
+		/* $parser->setHook( 'wegame', [ self::class, 'embedWeGame' ] );
+		$parser->setHook( 'tangler', [ self::class, 'embedTangler' ] );
+		$parser->setHook( 'gtrailer', [ self::class, 'embedGametrailers' ] ); */
 	}
 
 	/**
@@ -72,11 +72,8 @@ class Hooks {
 		return $id;
 	}
 
-	public static function embedYouTube( $input, $argv, $parser ) {
-		$ytid   = '';
-		$width  = $width_max  = 425;
-		$height = $height_max = 355;
-
+	public static function embedYouTube( $input, $argv ) {
+		$ytid = '';
 		if ( !empty( $argv['ytid'] ) ) {
 			$ytid = self::url2ytid( $argv['ytid'] );
 		} elseif ( $input ) {
@@ -169,7 +166,7 @@ class Hooks {
 		return $id;
 	}
 
-	public static function embedGoogleVideo( $input, $argv, $parser ) {
+	public static function embedGoogleVideo( $input, $argv ) {
 		$gvid   = '';
 		$width  = $width_max  = 400;
 		$height = $height_max = 326;
@@ -205,7 +202,7 @@ class Hooks {
 		return $id;
 	}
 
-	public static function embedArchiveOrgVideo( $input, $argv, $parser ) {
+	public static function embedArchiveOrgVideo( $input, $argv ) {
 		$aovid   = '';
 		$width  = $width_max  = 320;
 		$height = $height_max = 263;
@@ -249,7 +246,7 @@ class Hooks {
 		return $id;
 	}
 
-	public static function embedArchiveOrgAudio( $input, $argv, $parser ) {
+	public static function embedArchiveOrgAudio( $input, $argv ) {
 		$aoaid   = '';
 		$width  = $width_max  = 500;
 		$height = $height_max = 190;
@@ -294,7 +291,7 @@ class Hooks {
 		return $id;
 	}
 
-	public static function embedNicovideo( $input, $argv, $parser ) {
+	public static function embedNicovideo( $input, $argv ) {
 		$nvid = '';
 		$width  = 400;
 		$height = 326;
@@ -336,7 +333,7 @@ class Hooks {
 		return $id;
 	}
 
-	public static function embedWeGame( $input, $argv, $parser ) {
+	public static function embedWeGame( $input, $argv ) {
 		$weid   = '';
 		$width  = $width_max  = 488;
 		$height = $height_max = 387;
@@ -383,7 +380,7 @@ class Hooks {
 		return [ $tid, $gid ];
 	}
 
-	public static function embedTangler( $input, $argv, $parser ) {
+	public static function embedTangler( $input, $argv ) {
 		$tid = $gid = '';
 
 		if ( !empty( $argv['tid'] ) && !empty( $argv['gid'] ) ) {
@@ -412,7 +409,7 @@ class Hooks {
 		return $id;
 	}
 
-	public static function embedGametrailers( $input, $argv, $parser ) {
+	public static function embedGametrailers( $input, $argv ) {
 		$gtid   = '';
 		$width  = $width_max  = 480;
 		$height = $height_max = 392;
